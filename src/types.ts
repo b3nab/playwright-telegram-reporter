@@ -57,4 +57,15 @@ export interface TelegramReporterOptions {
    * - '{TEST}' - "has heading"
    */
   testFormat?: string
+
+  /**
+   * Custom title for the report message (first line)
+   * Can be a string or a function that receives test pass status
+   * Default: '✅ Playwright Test Results' or '❌ Playwright Test Results'
+   *
+   * Examples:
+   * - 'My Custom Tests'
+   * - (passed) => passed ? '✅ All Good!' : '❌ Tests Failed'
+   */
+  title?: string | ((passed: boolean) => string)
 }

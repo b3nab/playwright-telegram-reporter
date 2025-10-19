@@ -67,48 +67,6 @@ export default defineConfig({
 });
 ```
 
-### Alternative Import Methods
-
-You can also import the reporter class directly:
-
-**Named import:**
-```typescript
-import { defineConfig } from '@playwright/test';
-import { TelegramReporter } from '@b3nab/playwright-telegram-reporter';
-
-export default defineConfig({
-  reporter: [
-    ['list'],
-    [
-      TelegramReporter,
-      {
-        botToken: process.env.TELEGRAM_BOT_TOKEN,
-        chatId: process.env.TELEGRAM_CHAT_ID,
-      },
-    ],
-  ],
-});
-```
-
-**Default import:**
-```typescript
-import { defineConfig } from '@playwright/test';
-import TelegramReporter from '@b3nab/playwright-telegram-reporter';
-
-export default defineConfig({
-  reporter: [
-    ['list'],
-    [
-      TelegramReporter,
-      {
-        botToken: process.env.TELEGRAM_BOT_TOKEN,
-        chatId: process.env.TELEGRAM_CHAT_ID,
-      },
-    ],
-  ],
-});
-```
-
 ### Environment Variables
 
 ```env
@@ -183,16 +141,19 @@ export default defineConfig({
 });
 ```
 
-Output includes **all individual test names with durations**, full error messages for failures, and complete test breakdown.
-
-Default format shows just suite and test name for clarity:
+Output includes **summary statistics and all individual test names with durations**, plus full error messages for failures:
 
 ```
-✅ Playwright Test Results (Detailed)
+✅ Playwright Test Results
 
 Status: PASSED
 Duration: 12.45s
-Total Tests: 15
+
+📊 Summary:
+• Total: 15
+• Passed: 13
+• Failed: 2
+• Skipped: 0
 
 ❌ FAILED (2):
 
@@ -212,7 +173,7 @@ Total Tests: 15
   ...
 ```
 
-> **Note:** You can customize the test name format using the `testFormat` option (see below).
+> **Note:** You can customize the title using the `title` option and test name format using the `testFormat` option (see below).
 
 ### Custom Formatter
 
@@ -261,6 +222,36 @@ export default defineConfig({
 - **`always`** (default) - Send report on every test run
 - **`failure`** - Only send when tests fail
 - **`success`** - Only send when all tests pass
+
+### Custom Title
+
+Customize the report title (first line):
+
+```typescript
+export default defineConfig({
+  reporter: [
+    ['@b3nab/playwright-telegram-reporter', {
+      botToken: process.env.TELEGRAM_BOT_TOKEN,
+      chatId: process.env.TELEGRAM_CHAT_ID,
+      title: '🎭 My Test Suite', // Simple string
+    }]
+  ],
+});
+```
+
+Or use a function for dynamic titles based on pass/fail:
+
+```typescript
+export default defineConfig({
+  reporter: [
+    ['@b3nab/playwright-telegram-reporter', {
+      botToken: process.env.TELEGRAM_BOT_TOKEN,
+      chatId: process.env.TELEGRAM_CHAT_ID,
+      title: (passed) => passed ? '✅ All Tests Passed!' : '❌ Tests Failed',
+    }]
+  ],
+});
+```
 
 ### Test Name Format (Detailed Reports Only)
 
@@ -374,6 +365,7 @@ export default defineConfig({
 | `reportType` | `'simple' \| 'summary' \| 'detailed'` | No | `'summary'` | Report type: **simple** (pass/fail), **summary** (counts + duration), **detailed** (all tests with errors) |
 | `customFormatter` | `(result, suite) => string` | No | - | Custom function to format the entire message |
 | `sendOn` | `'always' \| 'failure' \| 'success'` | No | `'always'` | When to send: **always**, **failure** only, or **success** only |
+| `title` | `string \| ((passed) => string)` | No | `'✅/❌ Playwright Test Results'` | Custom title for the report. Can be string or function |
 | `testFormat` | `string` | No | `'{GROUP} › {TEST} ({TIME})'` | Template for test names. Variables: `{GROUP}`, `{TEST}`, `{TIME}`, `{BROWSER}`, `{FILENAME}` |
 
 ## Development

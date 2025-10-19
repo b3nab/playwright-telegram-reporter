@@ -12,9 +12,10 @@ import type { TelegramReporterOptions } from "./types"
  */
 export class TelegramReporter implements Reporter {
   private options: Required<
-    Omit<TelegramReporterOptions, "customFormatter">
+    Omit<TelegramReporterOptions, "customFormatter" | "title">
   > & {
     customFormatter?: TelegramReporterOptions["customFormatter"]
+    title?: TelegramReporterOptions["title"]
   }
   private suite: Suite | null = null
   private startTime = 0
@@ -27,6 +28,7 @@ export class TelegramReporter implements Reporter {
       customFormatter: options.customFormatter,
       sendOn: options.sendOn || "always",
       testFormat: options.testFormat || "{GROUP} › {TEST} ({TIME})",
+      title: options.title,
     }
 
     if (!this.options.botToken || !this.options.chatId) {
@@ -96,6 +98,21 @@ export class TelegramReporter implements Reporter {
   }
 
   /**
+   * Generate report title based on test status
+   */
+  private getTitle(passed: boolean): string {
+    const { title } = this.options
+
+    if (title) {
+      return typeof title === "function" ? title(passed) : title
+    }
+
+    // Default title with emoji
+    const emoji = passed ? "✅" : "❌"
+    return `${emoji} Playwright Test Results`
+  }
+
+  /**
    * Main formatting function - formats test information using template
    */
   private formatTest(test: TestCase, duration: string): string {
@@ -123,14 +140,15 @@ export class TelegramReporter implements Reporter {
   }
 
   private generateSimpleReport(result: FullResult): string {
-    const emoji = result.status === "passed" ? "✅" : "❌"
-    return `${emoji} Test run ${result.status}`
+    const passed = result.status === "passed"
+    return `${this.getTitle(passed)}\n\nStatus: ${result.status.toUpperCase()}`
   }
 
   private generateSummaryReport(result: FullResult, suite: Suite): string {
     const allTests = suite.allTests()
     const duration = Date.now() - this.startTime
     const durationSec = (duration / 1000).toFixed(2)
+    const isPassed = result.status === "passed"
 
     const passed = allTests.filter(
       (test) => test.results[0]?.status === "passed",
@@ -145,9 +163,7 @@ export class TelegramReporter implements Reporter {
       (test) => test.results[0]?.status === "timedOut",
     ).length
 
-    const emoji = result.status === "passed" ? "✅" : "❌"
-
-    return `${emoji} Playwright Test Results
+    return `${this.getTitle(isPassed)}
 
 Status: ${result.status.toUpperCase()}
 Duration: ${durationSec}s
@@ -164,11 +180,7 @@ ${timedOut > 0 ? `• Timed Out: ${timedOut}` : ""}`
     const allTests = suite.allTests()
     const duration = Date.now() - this.startTime
     const durationSec = (duration / 1000).toFixed(2)
-
-    let report = `${result.status === "passed" ? "✅" : "❌"} Playwright Test Results (Detailed)\n\n`
-    report += `Status: ${result.status.toUpperCase()}\n`
-    report += `Duration: ${durationSec}s\n`
-    report += `Total Tests: ${allTests.length}\n\n`
+    const isPassed = result.status === "passed"
 
     // Group tests by status
     const passed: TestCase[] = []
@@ -183,6 +195,18 @@ ${timedOut > 0 ? `• Timed Out: ${timedOut}` : ""}`
       else if (status === "skipped") skipped.push(test)
       else if (status === "timedOut") timedOut.push(test)
     }
+
+    // Build report with title and summary
+    let report = `${this.getTitle(isPassed)}\n\n`
+    report += `Status: ${result.status.toUpperCase()}\n`
+    report += `Duration: ${durationSec}s\n\n`
+    report += `📊 Summary:\n`
+    report += `• Total: ${allTests.length}\n`
+    report += `• Passed: ${passed.length}\n`
+    report += `• Failed: ${failed.length}\n`
+    report += `• Skipped: ${skipped.length}\n`
+    if (timedOut.length > 0) report += `• Timed Out: ${timedOut.length}\n`
+    report += `\n`
 
     // Helper to format test with duration
     const formatTestLine = (test: TestCase): string => {
