@@ -1,6 +1,6 @@
 {
   "name": "@b3nab/playwright-telegram-reporter",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Simple and Effective Playwright Reporter via Telegram Bot",
   "author": {
     "name": "Benedetto Abbenanti",
@@ -36,6 +36,9 @@
     "test": "playwright test",
     "lint": "biome check src tests playwright.config.ts",
     "format": "biome format --write src tests playwright.config.ts",
+    "bump": "pnpx bumpp",
+    "pub": "pnpm publish",
+    "yeah": "pnpm test && pnpm build && pnpm bump && pnpm pub --no-git-checks",
     "prepublishOnly": "pnpm run build"
   },
   "peerDependencies": {
