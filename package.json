@@ -1,0 +1,59 @@
+{
+  "name": "@b3nab/playwright-telegram-reporter",
+  "version": "1.0.0",
+  "description": "Simple and Effective Playwright Reporter via Telegram Bot",
+  "author": {
+    "name": "Benedetto Abbenanti",
+    "url": "https://ben.abbenanti.com"
+  },
+  "license": "AGPL-3.0-only",
+  "keywords": [
+    "playwright",
+    "reporter",
+    "telegram",
+    "testing",
+    "test-reporter",
+    "telegram-bot"
+  ],
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "require": "./dist/index.js",
+      "import": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "build": "biome check src tests playwright.config.ts && tsc",
+    "test": "playwright test",
+    "lint": "biome check src tests playwright.config.ts",
+    "format": "biome format --write src tests playwright.config.ts",
+    "prepublishOnly": "pnpm run build"
+  },
+  "peerDependencies": {
+    "@playwright/test": "^1.40.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/org-b3nab/playwright-telegram-reporter"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "packageManager": "pnpm@10.17.1",
+  "devDependencies": {
+    "@biomejs/biome": "^2.2.6",
+    "@playwright/test": "^1.56.1",
+    "@types/node": "^24.8.1",
+    "typescript": "^5.9.3"
+  }
+}
