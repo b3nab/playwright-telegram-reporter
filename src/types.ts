@@ -45,4 +45,16 @@ export interface TelegramReporterOptions {
    * When to send the report (default: 'always')
    */
   sendOn?: SendOn
+
+  /**
+   * Format template for test names in detailed reports
+   * Available variables: {BROWSER}, {FILENAME}, {GROUP}, {TEST}, {TIME}
+   * Default: '{GROUP} › {TEST} ({TIME})'
+   *
+   * Examples:
+   * - '{GROUP} › {TEST} ({TIME})' - "Example Tests › has heading (0.58s)"
+   * - '{BROWSER} | {TEST} ({TIME})' - "chromium | has heading (0.58s)"
+   * - '{TEST}' - "has heading"
+   */
+  testFormat?: string
 }

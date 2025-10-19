@@ -26,6 +26,7 @@ export class TelegramReporter implements Reporter {
       reportType: options.reportType || "summary",
       customFormatter: options.customFormatter,
       sendOn: options.sendOn || "always",
+      testFormat: options.testFormat || "{GROUP} › {TEST} ({TIME})",
     }
 
     if (!this.options.botToken || !this.options.chatId) {
@@ -94,6 +95,33 @@ export class TelegramReporter implements Reporter {
     }
   }
 
+  /**
+   * Main formatting function - formats test information using template
+   */
+  private formatTest(test: TestCase, duration: string): string {
+    const titlePath = test.titlePath()
+    const browser = test.parent.project()?.name || ""
+    const filename = test.location.file.split("/").pop() || ""
+
+    // titlePath format: [project, file, ...suites, testName]
+    // We need to extract just the suite names (exclude project, file, and test name)
+    const testName = titlePath[titlePath.length - 1] || ""
+
+    // Filter out project name and filename to get only suite titles
+    const suites = titlePath
+      .slice(0, -1) // Remove test name
+      .filter((title) => title !== browser && title !== filename)
+
+    const group = suites.join(" › ")
+
+    return this.options.testFormat
+      .replace(/\{BROWSER\}/g, browser)
+      .replace(/\{FILENAME\}/g, filename)
+      .replace(/\{GROUP\}/g, group)
+      .replace(/\{TEST\}/g, testName)
+      .replace(/\{TIME\}/g, duration)
+  }
+
   private generateSimpleReport(result: FullResult): string {
     const emoji = result.status === "passed" ? "✅" : "❌"
     return `${emoji} Test run ${result.status}`
@@ -137,7 +165,7 @@ ${timedOut > 0 ? `• Timed Out: ${timedOut}` : ""}`
     const duration = Date.now() - this.startTime
     const durationSec = (duration / 1000).toFixed(2)
 
-    let report = `${result.status === "passed" ? "✅" : "❌"} Playwright Test Results\n\n`
+    let report = `${result.status === "passed" ? "✅" : "❌"} Playwright Test Results (Detailed)\n\n`
     report += `Status: ${result.status.toUpperCase()}\n`
     report += `Duration: ${durationSec}s\n`
     report += `Total Tests: ${allTests.length}\n\n`
@@ -156,17 +184,25 @@ ${timedOut > 0 ? `• Timed Out: ${timedOut}` : ""}`
       else if (status === "timedOut") timedOut.push(test)
     }
 
-    // Failed tests with details
+    // Helper to format test with duration
+    const formatTestLine = (test: TestCase): string => {
+      const duration = test.results[0]?.duration
+        ? `${(test.results[0].duration / 1000).toFixed(2)}s`
+        : "N/A"
+      return this.formatTest(test, duration)
+    }
+
+    // Failed tests with full details
     if (failed.length > 0) {
-      report += `❌ Failed (${failed.length}):\n`
+      report += `❌ FAILED (${failed.length}):\n`
       for (const test of failed) {
-        report += `  • ${test.title}\n`
+        report += `\n  • ${formatTestLine(test)}\n`
         const error = test.results[0]?.error
         if (error) {
-          const errorMsg = error.message
-            ? error.message.split("\n")[0]
-            : "Unknown error"
-          report += `    ${errorMsg}\n`
+          const errorLines = error.message
+            ? error.message.split("\n").slice(0, 3)
+            : ["Unknown error"]
+          report += `    Error: ${errorLines.join("\n           ")}\n`
         }
       }
       report += "\n"
@@ -174,25 +210,28 @@ ${timedOut > 0 ? `• Timed Out: ${timedOut}` : ""}`
 
     // Timed out tests
     if (timedOut.length > 0) {
-      report += `⏱️ Timed Out (${timedOut.length}):\n`
+      report += `⏱️ TIMED OUT (${timedOut.length}):\n`
       for (const test of timedOut) {
-        report += `  • ${test.title}\n`
+        report += `  • ${formatTestLine(test)}\n`
       }
       report += "\n"
     }
 
     // Skipped tests
     if (skipped.length > 0) {
-      report += `⏭️ Skipped (${skipped.length}):\n`
+      report += `⏭️ SKIPPED (${skipped.length}):\n`
       for (const test of skipped) {
-        report += `  • ${test.title}\n`
+        report += `  • ${this.formatTest(test, "N/A")}\n`
       }
       report += "\n"
     }
 
-    // Passed tests (just count in detailed mode to avoid too much text)
+    // Passed tests
     if (passed.length > 0) {
-      report += `✅ Passed: ${passed.length} tests\n`
+      report += `✅ PASSED (${passed.length}):\n`
+      for (const test of passed) {
+        report += `  • ${formatTestLine(test)}\n`
+      }
     }
 
     return report
