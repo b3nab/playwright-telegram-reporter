@@ -19,6 +19,9 @@ export default defineConfig({
         botToken: process.env.TELEGRAM_BOT_TOKEN || "",
         chatId: process.env.TELEGRAM_CHAT_ID || "",
         reportType: "detailed",
+        testFormat: "{BROWSER} {GROUP} - {TEST} ({TIME})",
+        title: (passed) =>
+          passed ? "✅ All Tests Passed!" : "❌ Tests Failed",
         sendOn: "always",
       } satisfies TelegramReporterOptions,
     ],
