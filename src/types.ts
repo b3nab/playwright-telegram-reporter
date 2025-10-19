@@ -31,7 +31,7 @@ export interface TelegramReporterOptions {
   chatId: string
 
   /**
-   * Type of report to generate (default: 'summary')
+   * Type of report to generate (default: 'detailed')
    */
   reportType?: ReportType
 

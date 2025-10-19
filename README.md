@@ -362,7 +362,7 @@ export default defineConfig({
 |--------|------|----------|---------|-------------|
 | `botToken` | `string` | ✅ Yes | - | Telegram Bot Token from @BotFather |
 | `chatId` | `string` | ✅ Yes | - | Telegram Chat ID where messages are sent |
-| `reportType` | `'simple' \| 'summary' \| 'detailed'` | No | `'summary'` | Report type: **simple** (pass/fail), **summary** (counts + duration), **detailed** (all tests with errors) |
+| `reportType` | `'simple' \| 'summary' \| 'detailed'` | No | `'detailed'` | Report type: **simple** (pass/fail), **summary** (counts + duration), **detailed** (all tests + summary) |
 | `customFormatter` | `(result, suite) => string` | No | - | Custom function to format the entire message |
 | `sendOn` | `'always' \| 'failure' \| 'success'` | No | `'always'` | When to send: **always**, **failure** only, or **success** only |
 | `title` | `string \| ((passed) => string)` | No | `'✅/❌ Playwright Test Results'` | Custom title for the report. Can be string or function |

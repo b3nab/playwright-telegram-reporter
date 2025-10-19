@@ -24,7 +24,7 @@ export class TelegramReporter implements Reporter {
     this.options = {
       botToken: options.botToken,
       chatId: options.chatId,
-      reportType: options.reportType || "summary",
+      reportType: options.reportType || "detailed",
       customFormatter: options.customFormatter,
       sendOn: options.sendOn || "always",
       testFormat: options.testFormat || "{GROUP} › {TEST} ({TIME})",
