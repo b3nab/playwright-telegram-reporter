@@ -1,5 +1,9 @@
 # playwright-telegram-reporter
 
+[![npm](https://img.shields.io/npm/dm/@b3nab/playwright-telegram-reporter)](https://npm.chart.dev/@b3nab/playwright-telegram-reporter?primary=neutral&gray=neutral&theme=dark)
+[![npm version](https://img.shields.io/npm/v/@b3nab/playwright-telegram-reporter.svg)](https://www.npmjs.com/package/@b3nab/playwright-telegram-reporter)
+[![GitHub stars](https://img.shields.io/github/stars/b3nab/playwright-telegram-reporter)](https://github.com/b3nab/playwright-telegram-reporter/stargazers)
+
 Simple and Effective Playwright Reporter via Telegram Bot
 
 Send your Playwright test results directly to Telegram with flexible reporting options.
@@ -45,7 +49,7 @@ yarn add @b3nab/playwright-telegram-reporter
 
 ## Usage
 
-### Quick Start (Recommended)
+### Quick Start
 
 The simplest way to add the reporter to your `playwright.config.ts`:
 
@@ -99,7 +103,7 @@ Output:
 ✅ Test run passed
 ```
 
-#### Summary Report (Default)
+#### Summary Report
 
 ```typescript
 export default defineConfig({
@@ -127,7 +131,7 @@ Duration: 12.45s
 • Skipped: 0
 ```
 
-#### Detailed Report
+#### Detailed Report (Default)
 
 ```typescript
 export default defineConfig({
@@ -367,57 +371,6 @@ export default defineConfig({
 | `sendOn` | `'always' \| 'failure' \| 'success'` | No | `'always'` | When to send: **always**, **failure** only, or **success** only |
 | `title` | `string \| ((passed) => string)` | No | `'✅/❌ Playwright Test Results'` | Custom title for the report. Can be string or function |
 | `testFormat` | `string` | No | `'{GROUP} › {TEST} ({TIME})'` | Template for test names. Variables: `{GROUP}`, `{TEST}`, `{TIME}`, `{BROWSER}`, `{FILENAME}` |
-
-## Development
-
-```bash
-# Install dependencies
-pnpm install
-
-# Build the project
-pnpm run build
-
-# Run tests
-pnpm test
-
-# Lint code
-pnpm run lint
-
-# Format code
-pnpm run format
-```
-
-## Troubleshooting
-
-### Bot doesn't send messages
-
-1. **Check credentials**: Verify your bot token and chat ID are correct
-2. **Test the bot**: Send a message directly via Telegram API:
-   ```bash
-   curl -X POST "https://api.telegram.org/bot<YOUR_TOKEN>/sendMessage" \
-     -H "Content-Type: application/json" \
-     -d '{"chat_id":"<YOUR_CHAT_ID>","text":"Test"}'
-   ```
-3. **Check permissions**: Ensure the bot has permission to send messages in the chat
-4. **Environment variables**: Make sure variables are loaded (e.g., using `dotenv`)
-
-### Reporter not running
-
-1. **Import path**: Use the string path `'@b3nab/playwright-telegram-reporter'` instead of importing the class if you have issues
-2. **Check Node version**: This package requires Node.js 18+ for native fetch support
-3. **Review logs**: Check console for any error messages from `TelegramReporter`
-
-### TypeScript errors
-
-If you get type errors, make sure you have `@playwright/test` installed:
-
-```bash
-pnpm add -D @playwright/test
-```
-
-## Publishing
-
-For maintainers: See [PUBLISHING.md](./PUBLISHING.md) for instructions on how to publish new versions to npm.
 
 ## Contributing
 
