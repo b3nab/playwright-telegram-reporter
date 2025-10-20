@@ -17,6 +17,9 @@ importers:
       '@types/node':
         specifier: ^24.8.1
         version: 24.8.1
+      dotenv:
+        specifier: ^17.2.3
+        version: 17.2.3
       typescript:
         specifier: ^5.9.3
         version: 5.9.3
@@ -83,6 +86,10 @@ packages:
 
   '@types/node@24.8.1':
     resolution: {integrity: sha512-alv65KGRadQVfVcG69MuB4IzdYVpRwMG/mq8KWOaoOdyY617P5ivaDiMCGOFDWD2sAn5Q0mR3mRtUOgm99hL9Q==}
+
+  dotenv@17.2.3:
+    resolution: {integrity: sha512-JVUnt+DUIzu87TABbhPmNfVdBDt18BLOWjMUFJMSi/Qqg7NTYtabbvSNJGOJ7afbRuv9D/lngizHtP7QyLQ+9w==}
+    engines: {node: '>=12'}
 
   fsevents@2.3.2:
     resolution: {integrity: sha512-xiqMQR4xAeHTuB9uWm+fFRcIOgKBMiOBP+eXiyT7jsgVCq1bkVygt00oASowB7EdtpOHaaPgKt812P9ab+DDKA==}
@@ -151,6 +158,8 @@ snapshots:
   '@types/node@24.8.1':
     dependencies:
       undici-types: 7.14.0
+
+  dotenv@17.2.3: {}
 
   fsevents@2.3.2:
     optional: true
