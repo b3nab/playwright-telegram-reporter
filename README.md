@@ -427,7 +427,7 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ```bash
 # Clone the repository
-git clone https://github.com/org-b3nab/playwright-telegram-reporter.git
+git clone https://github.com/b3nab/playwright-telegram-reporter.git
 cd playwright-telegram-reporter
 
 # Install dependencies
@@ -455,6 +455,6 @@ Benedetto Abbenanti
 ## Links
 
 - [npm Package](https://www.npmjs.com/package/@b3nab/playwright-telegram-reporter)
-- [GitHub Repository](https://github.com/org-b3nab/playwright-telegram-reporter)
+- [GitHub Repository](https://github.com/b3nab/playwright-telegram-reporter)
 - [Playwright Documentation](https://playwright.dev)
 - [Telegram Bot API](https://core.telegram.org/bots/api)
